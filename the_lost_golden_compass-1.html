@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE LOST GOLDEN COMPASS: A Suggestion Quest</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        amber: {
+                            850: '#6d300c',
+                            950: '#2b1002',
+                        },
+                        temple: {
+                            dark: '#0f1319',
+                            stone: '#1e2530',
+                            gold: '#fbbf24',
+                            accent: '#d97706'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0d12;
+            color: #f3f4f6;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fff3b0 0%, #ffd700 50%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-border-glow {
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3), inset 0 0 15px rgba(251, 191, 36, 0.15);
+        }
+
+        .ancient-card {
+            background: rgba(22, 27, 38, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(217, 119, 6, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .btn-adventure {
+            background: linear-gradient(180deg, #d97706 0%, #b45309 100%);
+            border: 1px solid #f59e0b;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            box-shadow: 0 4px 12px rgba(180, 83, 9, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn-adventure:hover:not(:disabled) {
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-adventure:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        /* Chips styling */
+        .word-chip {
+            background: linear-gradient(135deg, #2a3447 0%, #1c2331 100%);
+            border: 1px solid #4b5563;
+            transition: all 0.2s ease;
+        }
+
+        .word-chip:hover {
+            border-color: #fbbf24;
+            transform: translateY(-2px);
+        }
+
+        .word-chip.selected {
+            background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+            border-color: #f59e0b;
+            color: #fef3c7;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f1319;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between relative min-h-screen">
+
+    <!-- Dynamic Canvas Background -->
+    <canvas id="adventureCanvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none"></canvas>
+
+    <!-- Navigation Header -->
+    <header class="w-full bg-temple-stone/80 backdrop-blur-md border-b border-amber-600/30 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-amber-600/20 border border-amber-500 flex items-center justify-center text-amber-400 font-bold text-lg">
+                <i class="fa-solid fa-compass animate-spin-slow"></i>
+            </div>
+            <div>
+                <h1 class="font-cinzel text-sm sm:text-base font-bold gold-gradient-text leading-none">THE LOST GOLDEN COMPASS</h1>
+                <p class="text-xs text-amber-200/70 font-sans mt-0.5">English Suggestion Quest • Grade XI SMK</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-4">
+            <!-- Audio Toggle (BGM & SFX) -->
+            <button id="audioToggleBtn" class="px-3 py-1.5 rounded-lg bg-gray-800/80 hover:bg-gray-700 text-amber-400 border border-amber-500/30 text-xs font-semibold transition flex items-center gap-2" title="Toggle Music & Sound Effects">
+                <i id="audioIcon" class="fa-solid fa-volume-high"></i>
+                <span id="audioLabel" class="hidden sm:inline">Sound ON</span>
+            </button>
+            
+            <!-- How to Play Button -->
+            <button id="helpBtn" class="px-3 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 border border-amber-500/40 text-amber-300 text-xs sm:text-sm font-semibold transition">
+                <i class="fa-solid fa-book-open mr-1"></i> Guide
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex items-center justify-center p-3 sm:p-6 z-10">
+
+        <!-- ================= MAIN MENU SCREEN ================= -->
+        <section id="mainMenuScreen" class="w-full max-w-2xl ancient-card rounded-2xl p-6 sm:p-10 text-center relative overflow-hidden my-auto">
+            <div class="absolute -top-12 -right-12 w-40 h-40 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="mb-6">
+                <span class="inline-block px-3 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-semibold rounded-full uppercase tracking-widest mb-3">
+                    Archaeology Learning Game
+                </span>
+                <h2 class="font-cinzel text-3xl sm:text-5xl font-black gold-gradient-text tracking-wider mb-2">
+                    THE LOST GOLDEN COMPASS
+                </h2>
+                <p class="text-amber-200/80 text-sm sm:text-base font-medium max-w-md mx-auto">
+                    Master <span class="text-amber-400 font-semibold">Asking & Giving Suggestions</span> to unlock ancient ruins, disarm temple traps, and claim the legendary golden relic!
+                </p>
+            </div>
+
+            <!-- Developer Attribution Badge -->
+            <div class="my-6 p-3 bg-temple-dark/80 rounded-xl border border-amber-500/30 max-w-md mx-auto flex items-center justify-center gap-3">
+                <i class="fa-solid fa-user-ninja text-amber-400 text-xl"></i>
+                <div class="text-left">
+                    <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Game Creator</p>
+                    <p class="text-xs sm:text-sm font-bold text-amber-300">Khairunnajwa Verina Ersan</p>
+                    <p class="text-[11px] text-amber-200/70">Class XI TJKT 1</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center items-center mt-8">
+                <button id="startAdventureBtn" class="w-full sm:w-auto px-8 py-3.5 rounded-xl btn-adventure text-white font-bold text-base uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-compass"></i> Start Adventure
+                </button>
+                <button id="howToPlayBtn" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gray-800/90 hover:bg-gray-700 border border-gray-600 text-gray-200 font-semibold text-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-info"></i> How To Play
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= HOW TO PLAY MODAL ================= -->
+        <div id="howToPlayModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="ancient-card max-w-xl w-full rounded-2xl p-6 relative max-h-[90vh] overflow-y-auto">
+                <button id="closeHelpModal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <h3 class="font-cinzel text-2xl font-bold text-amber-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-map-location-dot"></i> Explorer's Field Guide
+                </h3>
+
+                <div class="space-y-4 text-sm text-gray-300">
+                    <div class="p-3 bg-gray-800/60 rounded-lg border border-gray-700">
+                        <h4 class="font-semibold text-amber-300 mb-1">🎮 Game Mechanics</h4>
+                        <ul class="list-disc list-inside space-y-1 text-xs text-gray-300">
+                            <li>You have <span class="text-red-400 font-bold">3 Hearts (Lives)</span>. Wrong answers activate temple traps!</li>
+                            <li>Answer 10 questions spread over <span class="text-amber-400 font-bold">3 Tiers / Levels</span>.</li>
+                            <li>Correct answers award <span class="text-green-400 font-bold">+100 Points</span> plus consecutive combo bonuses!</li>
+                            <li>Use <span class="text-amber-300 font-bold">Limited Hints</span> if you get stuck in ancient chambers.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3 bg-gray-800/60 rounded-lg border border-gray-700">
+                        <h4 class="font-semibold text-amber-300 mb-1">📚 Target English Grammar</h4>
+                        <p class="text-xs text-gray-300 mb-2">Practice expressions for Asking and Giving Suggestions:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div class="bg-temple-dark p-2 rounded border border-amber-900/40">
+                                <span class="text-amber-400 font-bold">Asking Suggestions:</span>
+                                <p class="text-gray-400 italic">"What should I do?"</p>
+                                <p class="text-gray-400 italic">"What do you suggest?"</p>
+                            </div>
+                            <div class="bg-temple-dark p-2 rounded border border-amber-900/40">
+                                <span class="text-amber-400 font-bold">Giving Suggestions:</span>
+                                <p class="text-gray-400 italic">"You should..." / "Why don't you..."</p>
+                                <p class="text-gray-400 italic">"If I were you, I would..."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-gray-800/60 rounded-lg border border-gray-700">
+                        <h4 class="font-semibold text-amber-300 mb-1">🗺️ Adventure Levels</h4>
+                        <ol class="list-decimal list-inside text-xs text-gray-300 space-y-1">
+                            <li><strong class="text-amber-200">Level 1: The Jungle Gate</strong> (Fill in the blanks & sentence builder)</li>
+                            <li><strong class="text-amber-200">Level 2: The Ancient Temple</strong> (Jumbled sentences & dialogue sequence)</li>
+                            <li><strong class="text-amber-200">Level 3: The Golden Chamber</strong> (Complex multi-select challenges)</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <button id="closeHelpModalBtn" class="px-6 py-2.5 rounded-lg btn-adventure text-white font-bold text-sm">
+                        Got It, Let's Explore!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ACTIVE GAME SCREEN ================= -->
+        <section id="gameplayScreen" class="w-full max-w-3xl ancient-card rounded-2xl p-4 sm:p-7 relative hidden flex-col">
+            
+            <!-- HUD Header -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-amber-500/20">
+                <!-- Level Badge -->
+                <div>
+                    <span id="levelBadge" class="px-2.5 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold rounded-lg uppercase">
+                        LEVEL 1: THE JUNGLE GATE
+                    </span>
+                    <p id="questionCounter" class="text-xs text-gray-400 mt-1">Question 1 of 10</p>
+                </div>
+
+                <!-- Game Stats: Hearts, Score, Combo, Hints -->
+                <div class="flex items-center gap-3 sm:gap-5">
+                    <!-- Lives / Hearts -->
+                    <div class="flex items-center gap-1 text-red-500 text-lg" id="heartsContainer">
+                        <i class="fa-solid fa-heart"></i>
+                        <i class="fa-solid fa-heart"></i>
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+
+                    <!-- Combo Badge -->
+                    <div id="comboContainer" class="hidden px-2 py-0.5 bg-yellow-500/20 border border-yellow-400/50 rounded text-yellow-300 text-xs font-bold animate-pulse">
+                        ⚡ <span id="comboValue">2x</span> COMBO
+                    </div>
+
+                    <!-- Score -->
+                    <div class="text-right">
+                        <span class="text-[10px] uppercase text-gray-400 font-semibold block leading-none">Score</span>
+                        <span id="scoreText" class="font-cinzel text-lg font-bold text-amber-400">0</span>
+                    </div>
+
+                    <!-- Hint Button -->
+                    <button id="hintBtn" class="px-2.5 py-1.5 rounded-lg bg-amber-950/80 hover:bg-amber-900 border border-amber-500/40 text-amber-300 text-xs font-semibold flex items-center gap-1 transition" title="Get Hint">
+                        <i class="fa-solid fa-lightbulb text-yellow-400"></i>
+                        <span id="hintCount">3</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-800 h-2 rounded-full mb-5 overflow-hidden border border-gray-700">
+                <div id="progressBar" class="bg-gradient-to-r from-amber-600 to-amber-400 h-full w-10 transition-all duration-300"></div>
+            </div>
+
+            <!-- Scenario Narrative Box -->
+            <div class="mb-4 p-3 bg-temple-dark/90 rounded-xl border-l-4 border-amber-500 text-xs sm:text-sm text-amber-100 flex items-start gap-2.5">
+                <i class="fa-solid fa-scroll text-amber-400 text-base mt-0.5"></i>
+                <div id="scenarioText">
+                    You arrive at the jungle gate entrance...
+                </div>
+            </div>
+
+            <!-- Main Question Box -->
+            <div class="mb-5">
+                <h3 id="questionPrompt" class="text-base sm:text-lg font-bold text-white mb-2">
+                    Loading question...
+                </h3>
+                <p id="questionInstruction" class="text-xs text-amber-300/80 italic mb-3">
+                    Choose the correct suggestion to clear the path.
+                </p>
+
+                <!-- Interactive Workspace Container -->
+                <div id="interactiveArea" class="my-4 min-h-[140px] flex flex-col justify-center">
+                    <!-- Injected dynamically per question type -->
+                </div>
+            </div>
+
+            <!-- Hint Display Box -->
+            <div id="hintBox" class="hidden mb-4 p-3 bg-amber-950/60 border border-amber-500/40 rounded-xl text-xs text-amber-200 flex items-start gap-2">
+                <i class="fa-solid fa-eye text-yellow-400 text-sm mt-0.5"></i>
+                <div>
+                    <span class="font-bold text-amber-300">Explorer Hint:</span>
+                    <p id="hintText" class="mt-0.5">Focus on identifying whether the speaker is asking or giving a suggestion.</p>
+                </div>
+            </div>
+
+            <!-- Feedback Message Banner -->
+            <div id="feedbackBox" class="hidden mb-4 p-3 rounded-xl text-sm font-semibold text-center transition-all duration-300"></div>
+
+            <!-- Action Controls -->
+            <div class="flex items-center justify-between mt-2 pt-3 border-t border-gray-800">
+                <button id="resetActionBtn" class="hidden px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold transition">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Reset Selection
+                </button>
+                <div class="ml-auto">
+                    <button id="submitAnswerBtn" class="px-6 py-2.5 rounded-xl btn-adventure text-white font-bold text-sm flex items-center gap-2">
+                        <span>Check Answer</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CHECKPOINT SUMMARY MODAL ================= -->
+        <section id="checkpointScreen" class="w-full max-w-md ancient-card rounded-2xl p-6 text-center hidden">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-400 text-3xl">
+                <i class="fa-solid fa-dungeon"></i>
+            </div>
+            <h3 class="font-cinzel text-2xl font-bold text-amber-400 mb-1">CHECKPOINT REACHED!</h3>
+            <p id="checkpointTitle" class="text-xs text-gray-300 uppercase tracking-widest font-semibold mb-4">Level Completed</p>
+
+            <div class="p-4 bg-temple-dark rounded-xl border border-gray-700 text-left space-y-2 mb-6 text-xs sm:text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Level Score:</span>
+                    <span id="cpScore" class="font-bold text-amber-400">+300 pts</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Hearts Remaining:</span>
+                    <span id="cpHearts" class="font-bold text-red-400">❤️❤️❤️</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Current Accuracy:</span>
+                    <span id="cpAccuracy" class="font-bold text-green-400">100%</span>
+                </div>
+            </div>
+
+            <button id="nextLevelBtn" class="w-full py-3 rounded-xl btn-adventure text-white font-bold text-sm uppercase tracking-wider">
+                Enter Next Level <i class="fa-solid fa-play ml-1"></i>
+            </button>
+        </section>
+
+        <!-- ================= GAME OVER SCREEN ================= -->
+        <section id="gameOverScreen" class="w-full max-w-md ancient-card rounded-2xl p-6 text-center hidden">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-900/30 border-2 border-red-500 flex items-center justify-center text-red-500 text-3xl">
+                <i class="fa-solid fa-skull-crossbones"></i>
+            </div>
+            <h3 class="font-cinzel text-2xl font-bold text-red-500 mb-1">TEMPLE TRAP ACTIVATED</h3>
+            <p class="text-xs text-gray-400 mb-4">You ran out of lives during the excavation quest.</p>
+
+            <div class="p-4 bg-temple-dark rounded-xl border border-red-900/40 mb-6 text-center">
+                <span class="text-xs text-gray-400 block mb-1">Final Accumulated Score</span>
+                <span id="gameOverScore" class="font-cinzel text-3xl font-bold text-amber-400">0</span>
+            </div>
+
+            <div class="flex gap-3">
+                <button id="restartGameBtn" class="flex-1 py-3 rounded-xl btn-adventure text-white font-bold text-xs uppercase">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Try Again
+                </button>
+                <button id="returnMenuBtn" class="flex-1 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold text-xs uppercase border border-gray-600">
+                    Main Menu
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= VICTORY / FINAL TREASURE SCREEN ================= -->
+        <section id="victoryScreen" class="w-full max-w-2xl ancient-card rounded-2xl p-6 sm:p-8 text-center relative hidden">
+            <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-300 text-4xl gold-border-glow">
+                <i class="fa-solid fa-compass animate-spin-slow"></i>
+            </div>
+
+            <h2 class="font-cinzel text-3xl sm:text-4xl font-black gold-gradient-text mb-1">
+                CONGRATULATIONS, EXPLORER!
+            </h2>
+            <p class="text-xs sm:text-sm text-amber-200/90 mb-6">
+                You solved the ancient grammar riddles and unlocked <strong class="text-amber-400">The Lost Golden Compass</strong>!
+            </p>
+
+            <!-- Final Stats Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 text-left">
+                <div class="p-3 bg-temple-dark rounded-xl border border-amber-900/40">
+                    <span class="text-[10px] text-gray-400 uppercase font-semibold block">Total Score</span>
+                    <span id="finalScore" class="font-cinzel text-xl font-bold text-amber-400">1200</span>
+                </div>
+                <div class="p-3 bg-temple-dark rounded-xl border border-amber-900/40">
+                    <span class="text-[10px] text-gray-400 uppercase font-semibold block">Accuracy</span>
+                    <span id="finalAccuracy" class="font-cinzel text-xl font-bold text-green-400">100%</span>
+                </div>
+                <div class="p-3 bg-temple-dark rounded-xl border border-amber-900/40 col-span-2 sm:col-span-1">
+                    <span class="text-[10px] text-gray-400 uppercase font-semibold block">Max Combo</span>
+                    <span id="finalCombo" class="font-cinzel text-xl font-bold text-yellow-300">5x</span>
+                </div>
+            </div>
+
+            <!-- Achievement Badges Earned -->
+            <div class="mb-6">
+                <h4 class="text-xs uppercase tracking-wider text-amber-300 font-bold mb-3">
+                    <i class="fa-solid fa-award mr-1"></i> Achievement Badges Unlocked
+                </h4>
+                <div class="flex flex-wrap justify-center gap-2" id="badgesContainer">
+                    <span class="px-3 py-1.5 bg-amber-950/80 border border-amber-500/50 rounded-lg text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                        🗿 Temple Solver
+                    </span>
+                    <span class="px-3 py-1.5 bg-amber-950/80 border border-amber-500/50 rounded-lg text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                        🧭 Suggestion Master
+                    </span>
+                    <span class="px-3 py-1.5 bg-amber-950/80 border border-amber-500/50 rounded-lg text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                        🏆 Golden Compass Champion
+                    </span>
+                </div>
+            </div>
+
+            <!-- Creator Footer -->
+            <div class="p-3 bg-temple-dark/90 rounded-xl border border-amber-500/20 mb-6 text-center">
+                <p class="text-[11px] text-gray-400">Educational English Game Created By:</p>
+                <p class="text-xs sm:text-sm font-bold text-amber-300">Khairunnajwa Verina Ersan (XI TJKT 1)</p>
+            </div>
+
+            <!-- Replay Action Button -->
+            <button id="playAgainBtn" class="px-8 py-3.5 rounded-xl btn-adventure text-white font-bold text-sm uppercase tracking-wider">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Play Again
+            </button>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-2 px-4 text-[11px] text-gray-500 border-t border-gray-800/80 bg-temple-dark/60 z-20">
+        Created by Khairunnajwa Verina Ersan XI TJKT 1 • Asking & Giving Suggestions Adventure
+    </footer>
+
+    <script>
+        /* ================= WEB AUDIO API ADVANCED INSTRUMENT SYNTHESIZER ================= */
+        const AudioFX = {
+            ctx: null,
+            enabled: true,
+            bgmInterval: null,
+            bgmStep: 0,
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        this.ctx = new AudioContext();
+                    }
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+
+            // 1. Tribal Drum / Wood Click FX
+            playClick() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                
+                // Synth Woodblock / Drum
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(280, now);
+                osc.frequency.exponentialRampToValueAtTime(60, now + 0.08);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            },
+
+            // 2. Ancient Temple Bell / Gong (Level Checkpoint)
+            playGong() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                const freqs = [110, 221, 332, 445]; // Metallic overtones
+
+                freqs.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    const vol = 0.2 / (idx + 1);
+                    gain.gain.setValueAtTime(vol, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 2.5);
+                });
+            },
+
+            // 3. Mystical Flute & Harp Arpeggio (Correct Answer FX)
+            playCorrect() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                // Ancient Pentatonic Scale Notes: A4, C5, D5, E5, G5
+                const notes = [440.00, 523.25, 587.33, 659.25, 783.99];
+
+                notes.forEach((freq, idx) => {
+                    const time = now + idx * 0.07;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    // Flute-like sine timbre with slight vibrato
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, time);
+
+                    gain.gain.setValueAtTime(0.001, time);
+                    gain.gain.linearRampToValueAtTime(0.2, time + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.35);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(time);
+                    osc.stop(time + 0.35);
+                });
+            },
+
+            // 4. Temple Trap Stone Rumble (Wrong Answer FX)
+            playWrong() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+
+                // Deep low rumble oscillator
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(90, now);
+                osc.frequency.linearRampToValueAtTime(35, now + 0.4);
+
+                // Filter for low stone impact
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(250, now);
+
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.4);
+            },
+
+            // 5. Epic Fanfare / Horns (Victory Screen)
+            playVictory() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                // Majestic brass triad chord sequence
+                const chords = [
+                    { time: 0.0, freqs: [220, 277.18, 329.63] }, // A
+                    { time: 0.25, freqs: [293.66, 369.99, 440] }, // D
+                    { time: 0.50, freqs: [329.63, 415.30, 493.88] }, // E
+                    { time: 0.85, freqs: [440, 554.37, 659.25, 880] }  // A Octave
+                ];
+
+                chords.forEach(c => {
+                    c.freqs.forEach(freq => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now + c.time);
+
+                        const duration = (c.time > 0.8) ? 1.2 : 0.22;
+                        gain.gain.setValueAtTime(0.15, now + c.time);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + c.time + duration);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now + c.time);
+                        osc.stop(now + c.time + duration);
+                    });
+                });
+            },
+
+            // 6. Ambient Archaeological Background Music Loop (BGM Generator)
+            startBGM() {
+                if (this.bgmInterval) return;
+                this.init();
+                
+                // Musical scale & motifs for ancient archaeological adventure (A minor / Modal Pentatonic)
+                const bassline = [110, 110, 130.81, 110, 146.83, 110, 123.47, 98]; 
+                const chords = [
+                    [220, 261.63, 329.63], // Am
+                    [174.61, 220, 261.63], // F
+                    [196.00, 246.94, 293.66], // G
+                    [164.81, 220, 246.94]  // Em
+                ];
+                const melody = [
+                    440, 523.25, 659.25, 587.33, 523.25, 440, 392, 440,
+                    523.25, 659.25, 783.99, 659.25, 587.33, 523.25, 440, 493.88
+                ];
+
+                let step = 0;
+                this.bgmInterval = setInterval(() => {
+                    if (!this.enabled || !this.ctx) return;
+                    if (this.ctx.state === 'suspended') this.ctx.resume();
+
+                    const now = this.ctx.currentTime;
+                    const measureStep = step % 16;
+                    const chordIndex = Math.floor((step % 32) / 8);
+
+                    // 1. Ambient Temple Warm Pad (Harmonies)
+                    if (measureStep % 8 === 0) {
+                        const currentChord = chords[chordIndex];
+                        currentChord.forEach(freq => {
+                            const osc = this.ctx.createOscillator();
+                            const gain = this.ctx.createGain();
+                            const filter = this.ctx.createBiquadFilter();
+
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(freq / 2, now);
+
+                            filter.type = 'lowpass';
+                            filter.frequency.setValueAtTime(350, now);
+
+                            gain.gain.setValueAtTime(0.001, now);
+                            gain.gain.linearRampToValueAtTime(0.04, now + 0.4);
+                            gain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
+
+                            osc.connect(filter);
+                            filter.connect(gain);
+                            gain.connect(this.ctx.destination);
+                            osc.start(now);
+                            osc.stop(now + 2.3);
+                        });
+                    }
+
+                    // 2. Tribal Percussion Rhythm
+                    if (measureStep % 2 === 0) {
+                        const drumOsc = this.ctx.createOscillator();
+                        const drumGain = this.ctx.createGain();
+                        drumOsc.type = 'sine';
+                        drumOsc.frequency.setValueAtTime(measureStep % 4 === 0 ? 110 : 70, now);
+                        drumOsc.frequency.exponentialRampToValueAtTime(30, now + 0.12);
+                        
+                        drumGain.gain.setValueAtTime(measureStep % 4 === 0 ? 0.18 : 0.09, now);
+                        drumGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                        
+                        drumOsc.connect(drumGain);
+                        drumGain.connect(this.ctx.destination);
+                        drumOsc.start(now);
+                        drumOsc.stop(now + 0.12);
+                    }
+
+                    // Woodblock / Shaker accents
+                    if (measureStep % 2 === 1) {
+                        const clickOsc = this.ctx.createOscillator();
+                        const clickGain = this.ctx.createGain();
+                        clickOsc.type = 'triangle';
+                        clickOsc.frequency.setValueAtTime(550 + (measureStep * 15), now);
+                        clickGain.gain.setValueAtTime(0.02, now);
+                        clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                        
+                        clickOsc.connect(clickGain);
+                        clickGain.connect(this.ctx.destination);
+                        clickOsc.start(now);
+                        clickOsc.stop(now + 0.04);
+                    }
+
+                    // 3. Bassline Groove
+                    if (measureStep % 2 === 0) {
+                        const bassFreq = bassline[Math.floor(measureStep / 2) % bassline.length];
+                        const bassOsc = this.ctx.createOscillator();
+                        const bassGain = this.ctx.createGain();
+                        bassOsc.type = 'triangle';
+                        bassOsc.frequency.setValueAtTime(bassFreq, now);
+
+                        bassGain.gain.setValueAtTime(0.07, now);
+                        bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+                        bassOsc.connect(bassGain);
+                        bassGain.connect(this.ctx.destination);
+                        bassOsc.start(now);
+                        bassOsc.stop(now + 0.25);
+                    }
+
+                    // 4. Mystical Flute Lead Melody
+                    const note = melody[step % melody.length];
+                    if (note && (step % 2 === 0 || Math.random() > 0.35)) {
+                        const melOsc = this.ctx.createOscillator();
+                        const melGain = this.ctx.createGain();
+
+                        melOsc.type = 'sine';
+                        melOsc.frequency.setValueAtTime(note, now);
+
+                        melGain.gain.setValueAtTime(0.001, now);
+                        melGain.gain.linearRampToValueAtTime(0.05, now + 0.05);
+                        melGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+                        melOsc.connect(melGain);
+                        melGain.connect(this.ctx.destination);
+                        melOsc.start(now);
+                        melOsc.stop(now + 0.32);
+                    }
+
+                    step++;
+                }, 220);
+            },
+
+            stopBGM() {
+                if (this.bgmInterval) {
+                    clearInterval(this.bgmInterval);
+                    this.bgmInterval = null;
+                }
+            }
+        };
+
+        /* ================= 10 QUESTIONS DATASET (3 LEVEL TIERS) ================= */
+        const QUESTION_DATABASE = [
+            // LEVEL 1: THE JUNGLE GATE (Q1 - Q3)
+            {
+                id: 1,
+                level: 1,
+                levelTitle: "LEVEL 1: THE JUNGLE GATE",
+                type: "fill_blank",
+                scenario: "Your team's field scanner lost network connectivity in the dense jungle.",
+                prompt: "Explorer Roy asks: \"I cannot connect my tablet to the local server. What ____ I do?\"",
+                instruction: "Choose the correct modal verb to complete the suggestion question.",
+                options: ["should", "would", "must", "did"],
+                correct: "should",
+                hint: "Use 'should' when asking for advice on what action to take."
+            },
+            {
+                id: 2,
+                level: 1,
+                levelTitle: "LEVEL 1: THE JUNGLE GATE",
+                type: "fill_blank",
+                scenario: "Your laptop battery drains fast while configuring the router in the field camp.",
+                prompt: "Maya gives advice: \"Your screen is too bright. You ____ lower the screen brightness to save battery.\"",
+                instruction: "Select the standard modal verb for giving friendly advice.",
+                options: ["should", "shall", "ought", "would"],
+                correct: "should",
+                hint: "The pattern 'You + should + Verb 1' is used to give direct recommendations."
+            },
+            {
+                id: 3,
+                level: 1,
+                levelTitle: "LEVEL 1: THE JUNGLE GATE",
+                type: "jumbled",
+                scenario: "An ancient stone slab requires a suggestion phrase to unlock the jungle gate.",
+                prompt: "Re-arrange the words below to give a constructive suggestion for a damaged LAN cable:",
+                words: ["Why", "don't", "you", "replace", "the", "LAN", "cable?"],
+                correctOrder: ["Why", "don't", "you", "replace", "the", "LAN", "cable?"],
+                hint: "Start with 'Why don't you...' followed by the main verb 'replace'."
+            },
+
+            // LEVEL 2: THE ANCIENT TEMPLE (Q4 - Q6)
+            {
+                id: 4,
+                level: 2,
+                levelTitle: "LEVEL 2: THE ANCIENT TEMPLE",
+                type: "jumbled",
+                scenario: "You enter the dark temple hall and find a glowing inscription on the wall.",
+                prompt: "Assemble the scrambled words into a formal suggestion sentence:",
+                words: ["I", "suggest", "that", "you", "check", "the", "router", "settings."],
+                correctOrder: ["I", "suggest", "that", "you", "check", "the", "router", "settings."],
+                hint: "Begin with 'I suggest that...' then add subject and base verb."
+            },
+            {
+                id: 5,
+                level: 2,
+                levelTitle: "LEVEL 2: THE ANCIENT TEMPLE",
+                type: "dialogue",
+                scenario: "Two student explorers discuss an IT presentation problem while navigating temple stairs.",
+                prompt: "Arrange the dialogue snippet lines in a logical, coherent order:",
+                dialogueSteps: [
+                    { id: "stepA", text: "Maya: The network slide presentation keeps freezing!" },
+                    { id: "stepB", text: "Roy: What do you suggest I do?" },
+                    { id: "stepC", text: "Maya: You could restart the presentation software." },
+                    { id: "stepD", text: "Roy: That's a helpful idea, thanks!" }
+                ],
+                correctSequence: ["stepA", "stepB", "stepC", "stepD"],
+                hint: "First state the problem -> Ask for suggestion -> Give suggestion -> Express thanks."
+            },
+            {
+                id: 6,
+                level: 2,
+                levelTitle: "LEVEL 2: THE ANCIENT TEMPLE",
+                type: "fill_blank",
+                scenario: "Your guide suggests taking a rest before entering the inner riddle chamber.",
+                prompt: "Guide: \"____ about taking a short break before we solve the main temple lock?\"",
+                instruction: "Pick the word that completes the suggestion phrase.",
+                options: ["How", "What", "Why", "Should"],
+                correct: "How",
+                hint: "'How about + V-ing?' or 'What about + V-ing?' are standard suggestion starters."
+            },
+
+            // LEVEL 3: THE GOLDEN CHAMBER (Q7 - Q10)
+            {
+                id: 7,
+                level: 3,
+                levelTitle: "LEVEL 3: THE GOLDEN CHAMBER",
+                type: "dialogue",
+                scenario: "A conversation about preparing a TJKT network lab exam inside the Golden Chamber.",
+                prompt: "Order this 4-part dialogue correctly to deactivate the stone guardian:",
+                dialogueSteps: [
+                    { id: "d1", text: "Riko: I'm struggling with IP subnetting for tomorrow's lab exam." },
+                    { id: "d2", text: "Lia: If I were you, I would practice online subnetting exercises." },
+                    { id: "d3", text: "Riko: Do you have any specific website suggestions?" },
+                    { id: "d4", text: "Lia: Why don't we review the Cisco network notes together now?" }
+                ],
+                correctSequence: ["d1", "d2", "d3", "d4"],
+                hint: "Problem statement -> Advice using 'If I were you' -> Follow-up question -> Combined suggestion."
+            },
+            {
+                id: 8,
+                level: 3,
+                levelTitle: "LEVEL 3: THE GOLDEN CHAMBER",
+                type: "multi_select",
+                scenario: "Your teammate faces a corrupted router configuration during a live demonstration.",
+                prompt: "Which of the following statements are **GIVING SUGGESTIONS**? (Select ALL correct choices)",
+                options: [
+                    { id: "m1", text: "Why don't you restore the backup configuration file?", correct: true },
+                    { id: "m2", text: "If I were you, I would inspect the log files first.", correct: true },
+                    { id: "m3", text: "What do you suggest we do now?", correct: false },
+                    { id: "m4", text: "I suggest that you check the Ethernet connection.", correct: true },
+                    { id: "m5", text: "Do you have any suggestions for me?", correct: false }
+                ],
+                hint: "Look for expressions that offer solutions ('Why don't you', 'If I were you', 'I suggest that')."
+            },
+            {
+                id: 9,
+                level: 3,
+                levelTitle: "LEVEL 3: THE GOLDEN CHAMBER",
+                type: "multi_select",
+                scenario: "You need to ask your teacher for guidance on choosing an internship place.",
+                prompt: "Which of the following options are used specifically for **ASKING FOR SUGGESTIONS**? (Select ALL correct choices)",
+                options: [
+                    { id: "a1", text: "What do you suggest I should focus on?", correct: true },
+                    { id: "a2", text: "Do you have any suggestions for my project?", correct: true },
+                    { id: "a3", text: "You should apply for the IT support position.", correct: false },
+                    { id: "a4", text: "What should I do to prepare for the interview?", correct: true },
+                    { id: "a5", text: "How about visiting the network lab later?", correct: false }
+                ],
+                hint: "Select options that end with a question mark asking for help or ideas."
+            },
+            {
+                id: 10,
+                level: 3,
+                levelTitle: "LEVEL 3: THE GOLDEN CHAMBER",
+                type: "multi_select",
+                scenario: "The final door before the Golden Compass requires diplomatic advice.",
+                prompt: "Your team is deciding how to disarm the final vault lock safely. Select ALL **polite & valid suggestions**:",
+                options: [
+                    { id: "f1", text: "Why don't we re-read the ancient symbols together?", correct: true },
+                    { id: "f2", text: "I suggest that we use safety ropes before stepping forward.", correct: true },
+                    { id: "f3", text: "You could check the voltage levels with a multimeter.", correct: true },
+                    { id: "f4", text: "What should I do next?", correct: false }
+                ],
+                hint: "Three of the options give polite suggestions using 'Why don't we', 'I suggest that', and 'You could'."
+            }
+        ];
+
+        /* ================= GAME STATE ENGINE ================= */
+        const GameState = {
+            currentQuestionIndex: 0,
+            lives: 3,
+            score: 0,
+            comboCount: 0,
+            maxCombo: 0,
+            hintsRemaining: 3,
+            totalCorrect: 0,
+            userSelections: [],
+
+            reset() {
+                this.currentQuestionIndex = 0;
+                this.lives = 3;
+                this.score = 0;
+                this.comboCount = 0;
+                this.maxCombo = 0;
+                this.hintsRemaining = 3;
+                this.totalCorrect = 0;
+                this.userSelections = [];
+            }
+        };
+
+        /* ================= DOM ELEMENTS ================= */
+        const DOM = {
+            // Screens
+            mainMenuScreen: document.getElementById('mainMenuScreen'),
+            gameplayScreen: document.getElementById('gameplayScreen'),
+            checkpointScreen: document.getElementById('checkpointScreen'),
+            gameOverScreen: document.getElementById('gameOverScreen'),
+            victoryScreen: document.getElementById('victoryScreen'),
+            howToPlayModal: document.getElementById('howToPlayModal'),
+
+            // Main Menu Controls
+            startAdventureBtn: document.getElementById('startAdventureBtn'),
+            howToPlayBtn: document.getElementById('howToPlayBtn'),
+            closeHelpModal: document.getElementById('closeHelpModal'),
+            closeHelpModalBtn: document.getElementById('closeHelpModalBtn'),
+            helpBtn: document.getElementById('helpBtn'),
+            audioToggleBtn: document.getElementById('audioToggleBtn'),
+            audioIcon: document.getElementById('audioIcon'),
+            audioLabel: document.getElementById('audioLabel'),
+
+            // Gameplay Elements
+            levelBadge: document.getElementById('levelBadge'),
+            questionCounter: document.getElementById('questionCounter'),
+            heartsContainer: document.getElementById('heartsContainer'),
+            scoreText: document.getElementById('scoreText'),
+            comboContainer: document.getElementById('comboContainer'),
+            comboValue: document.getElementById('comboValue'),
+            progressBar: document.getElementById('progressBar'),
+            hintBtn: document.getElementById('hintBtn'),
+            hintCount: document.getElementById('hintCount'),
+            scenarioText: document.getElementById('scenarioText'),
+            questionPrompt: document.getElementById('questionPrompt'),
+            questionInstruction: document.getElementById('questionInstruction'),
+            interactiveArea: document.getElementById('interactiveArea'),
+            hintBox: document.getElementById('hintBox'),
+            hintText: document.getElementById('hintText'),
+            feedbackBox: document.getElementById('feedbackBox'),
+            resetActionBtn: document.getElementById('resetActionBtn'),
+            submitAnswerBtn: document.getElementById('submitAnswerBtn'),
+
+            // Checkpoint Elements
+            checkpointTitle: document.getElementById('checkpointTitle'),
+            cpScore: document.getElementById('cpScore'),
+            cpHearts: document.getElementById('cpHearts'),
+            cpAccuracy: document.getElementById('cpAccuracy'),
+            nextLevelBtn: document.getElementById('nextLevelBtn'),
+
+            // Game Over Elements
+            gameOverScore: document.getElementById('gameOverScore'),
+            restartGameBtn: document.getElementById('restartGameBtn'),
+            returnMenuBtn: document.getElementById('returnMenuBtn'),
+
+            // Victory Elements
+            finalScore: document.getElementById('finalScore'),
+            finalAccuracy: document.getElementById('finalAccuracy'),
+            finalCombo: document.getElementById('finalCombo'),
+            playAgainBtn: document.getElementById('playAgainBtn')
+        };
+
+        /* ================= SCREEN NAVIGATION & CONTROLS ================= */
+        function showScreen(screen) {
+            [DOM.mainMenuScreen, DOM.gameplayScreen, DOM.checkpointScreen, DOM.gameOverScreen, DOM.victoryScreen].forEach(s => {
+                s.classList.add('hidden');
+            });
+            screen.classList.remove('hidden');
+            if (screen === DOM.gameplayScreen) {
+                screen.classList.add('flex');
+            } else {
+                screen.classList.remove('flex');
+            }
+        }
+
+        // Initialize Audio Toggle
+        DOM.audioToggleBtn.addEventListener('click', () => {
+            AudioFX.enabled = !AudioFX.enabled;
+            if (AudioFX.enabled) {
+                DOM.audioIcon.className = "fa-solid fa-volume-high";
+                DOM.audioLabel.textContent = "Sound ON";
+                AudioFX.startBGM();
+                AudioFX.playClick();
+            } else {
+                DOM.audioIcon.className = "fa-solid fa-volume-xmark text-gray-500";
+                DOM.audioLabel.textContent = "Muted";
+                AudioFX.stopBGM();
+            }
+        });
+
+        // Guide Modal Events
+        const toggleHelp = (show) => {
+            AudioFX.playClick();
+            if (show) DOM.howToPlayModal.classList.remove('hidden');
+            else DOM.howToPlayModal.classList.add('hidden');
+        };
+        DOM.howToPlayBtn.addEventListener('click', () => toggleHelp(true));
+        DOM.helpBtn.addEventListener('click', () => toggleHelp(true));
+        DOM.closeHelpModal.addEventListener('click', () => toggleHelp(false));
+        DOM.closeHelpModalBtn.addEventListener('click', () => toggleHelp(false));
+
+        // Start Adventure
+        DOM.startAdventureBtn.addEventListener('click', () => {
+            AudioFX.playClick();
+            AudioFX.startBGM();
+            GameState.reset();
+            showScreen(DOM.gameplayScreen);
+            loadQuestion(0);
+        });
+
+        // Hint System
+        DOM.hintBtn.addEventListener('click', () => {
+            if (GameState.hintsRemaining > 0 && DOM.hintBox.classList.contains('hidden')) {
+                AudioFX.playClick();
+                GameState.hintsRemaining--;
+                DOM.hintCount.textContent = GameState.hintsRemaining;
+                DOM.hintBox.classList.remove('hidden');
+                if (GameState.hintsRemaining === 0) {
+                    DOM.hintBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        });
+
+        /* ================= QUESTION RENDERER ================= */
+        function loadQuestion(index) {
+            const q = QUESTION_DATABASE[index];
+            GameState.userSelections = [];
+
+            // Reset UI States
+            DOM.hintBox.classList.add('hidden');
+            DOM.feedbackBox.classList.add('hidden');
+            DOM.resetActionBtn.classList.add('hidden');
+            DOM.submitAnswerBtn.disabled = false;
+            DOM.hintText.textContent = q.hint;
+
+            // Update Header HUD
+            DOM.levelBadge.textContent = q.levelTitle;
+            DOM.questionCounter.textContent = `Question ${index + 1} of ${QUESTION_DATABASE.length}`;
+            DOM.scoreText.textContent = GameState.score;
+            DOM.hintCount.textContent = GameState.hintsRemaining;
+
+            // Update Lives Display
+            let heartsHTML = "";
+            for (let i = 0; i < 3; i++) {
+                if (i < GameState.lives) {
+                    heartsHTML += '<i class="fa-solid fa-heart text-red-500"></i> ';
+                } else {
+                    heartsHTML += '<i class="fa-solid fa-heart text-gray-600"></i> ';
+                }
+            }
+            DOM.heartsContainer.innerHTML = heartsHTML;
+
+            // Update Combo Display
+            if (GameState.comboCount >= 2) {
+                DOM.comboContainer.classList.remove('hidden');
+                DOM.comboValue.textContent = `${GameState.comboCount}x`;
+            } else {
+                DOM.comboContainer.classList.add('hidden');
+            }
+
+            // Update Progress Bar
+            const progressPercent = ((index + 1) / QUESTION_DATABASE.length) * 100;
+            DOM.progressBar.style.width = `${progressPercent}%`;
+
+            // Narrative & Question Prompts
+            DOM.scenarioText.textContent = q.scenario;
+            DOM.questionPrompt.textContent = q.prompt;
+            DOM.questionInstruction.textContent = q.instruction || "Choose or assemble the best response.";
+
+            // Render Dynamic Interactive Area
+            DOM.interactiveArea.innerHTML = "";
+
+            if (q.type === "fill_blank") {
+                renderSingleChoice(q);
+            } else if (q.type === "jumbled") {
+                renderJumbledSentence(q);
+            } else if (q.type === "dialogue") {
+                renderDialogueReorder(q);
+            } else if (q.type === "multi_select") {
+                renderMultiSelect(q);
+            }
+        }
+
+        /* 1. Single Choice Renderer (Fill in the Blank) */
+        function renderSingleChoice(q) {
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-3";
+
+            q.options.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = "p-3.5 rounded-xl bg-temple-dark hover:bg-amber-950/50 border border-gray-700 hover:border-amber-500/60 text-left text-sm font-semibold transition flex items-center justify-between";
+                btn.innerHTML = `<span>${opt}</span><i class="fa-regular fa-circle text-gray-500"></i>`;
+                
+                btn.addEventListener('click', () => {
+                    AudioFX.playClick();
+                    grid.querySelectorAll('button').forEach(b => {
+                        b.className = "p-3.5 rounded-xl bg-temple-dark border border-gray-700 text-left text-sm font-semibold transition flex items-center justify-between";
+                        b.querySelector('i').className = "fa-regular fa-circle text-gray-500";
+                    });
+                    btn.className = "p-3.5 rounded-xl bg-amber-950/80 border-2 border-amber-500 text-amber-200 text-left text-sm font-semibold transition flex items-center justify-between";
+                    btn.querySelector('i').className = "fa-solid fa-circle-check text-amber-400";
+                    GameState.userSelections = [opt];
+                });
+                grid.appendChild(btn);
+            });
+
+            DOM.interactiveArea.appendChild(grid);
+        }
+
+        /* 2. Jumbled Sentence Builder Renderer */
+        function renderJumbledSentence(q) {
+            DOM.resetActionBtn.classList.remove('hidden');
+
+            const container = document.createElement('div');
+            container.className = "space-y-4";
+
+            // Target Placement Area
+            const dropBox = document.createElement('div');
+            dropBox.className = "p-4 min-h-[60px] bg-temple-dark rounded-xl border-2 border-dashed border-amber-500/40 flex flex-wrap gap-2 items-center";
+            dropBox.id = "sentenceTarget";
+            dropBox.innerHTML = `<span class="text-xs text-gray-500 italic pointer-events-none" id="placeholderMsg">Tap words below to assemble your sentence...</span>`;
+
+            // Bank of Words
+            const wordBank = document.createElement('div');
+            wordBank.className = "flex flex-wrap gap-2 p-2 bg-gray-900/50 rounded-xl border border-gray-800";
+
+            // Shuffle words for challenge
+            const shuffled = [...q.words].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((word) => {
+                const chip = document.createElement('button');
+                chip.className = "px-3 py-2 rounded-lg word-chip text-sm font-medium text-gray-200 shadow-sm";
+                chip.textContent = word;
+
+                chip.addEventListener('click', () => {
+                    AudioFX.playClick();
+                    if (!chip.classList.contains('selected')) {
+                        chip.classList.add('selected', 'opacity-40');
+                        
+                        // Add to target box
+                        const placed = document.createElement('span');
+                        placed.className = "px-3 py-1.5 rounded-lg bg-amber-600 text-white font-semibold text-sm shadow cursor-pointer flex items-center gap-1";
+                        placed.innerHTML = `${word} <i class="fa-solid fa-xmark text-xs opacity-70"></i>`;
+                        
+                        placed.addEventListener('click', () => {
+                            AudioFX.playClick();
+                            placed.remove();
+                            chip.classList.remove('selected', 'opacity-40');
+                            
+                            // Remove from state array
+                            const idx = GameState.userSelections.indexOf(word);
+                            if (idx > -1) GameState.userSelections.splice(idx, 1);
+
+                            if (dropBox.querySelectorAll('span:not(#placeholderMsg)').length === 0) {
+                                document.getElementById('placeholderMsg')?.classList.remove('hidden');
+                            }
+                        });
+
+                        document.getElementById('placeholderMsg')?.classList.add('hidden');
+                        dropBox.appendChild(placed);
+                        GameState.userSelections.push(word);
+                    }
+                });
+
+                wordBank.appendChild(chip);
+            });
+
+            container.appendChild(dropBox);
+            container.appendChild(wordBank);
+            DOM.interactiveArea.appendChild(container);
+
+            DOM.resetActionBtn.onclick = () => {
+                AudioFX.playClick();
+                GameState.userSelections = [];
+                dropBox.querySelectorAll('span:not(#placeholderMsg)').forEach(s => s.remove());
+                document.getElementById('placeholderMsg')?.classList.remove('hidden');
+                wordBank.querySelectorAll('button').forEach(b => b.classList.remove('selected', 'opacity-40'));
+            };
+        }
+
+        /* 3. Dialogue Sequence Builder Renderer */
+        function renderDialogueReorder(q) {
+            const listContainer = document.createElement('div');
+            listContainer.className = "space-y-2";
+
+            // Initialize user sequence order state
+            let currentOrder = [...q.dialogueSteps].sort(() => Math.random() - 0.5);
+
+            function updateList() {
+                listContainer.innerHTML = "";
+                currentOrder.forEach((step, index) => {
+                    const item = document.createElement('div');
+                    item.className = "p-3 rounded-xl bg-temple-dark border border-amber-900/40 flex items-center justify-between gap-2 text-xs sm:text-sm text-gray-200";
+
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-amber-600/30 border border-amber-500/50 text-amber-300 font-bold flex items-center justify-center text-xs flex-shrink-0">${index + 1}</span>
+                            <span>${step.text}</span>
+                        </div>
+                        <div class="flex flex-col gap-1 flex-shrink-0">
+                            <button class="up-btn p-1 text-xs text-amber-400 hover:text-white" ${index === 0 ? 'disabled class="opacity-30 p-1"' : ''} title="Move Up">
+                                <i class="fa-solid fa-chevron-up"></i>
+                            </button>
+                            <button class="down-btn p-1 text-xs text-amber-400 hover:text-white" ${index === currentOrder.length - 1 ? 'disabled class="opacity-30 p-1"' : ''} title="Move Down">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    // Move Up Action
+                    item.querySelector('.up-btn')?.addEventListener('click', () => {
+                        AudioFX.playClick();
+                        if (index > 0) {
+                            const temp = currentOrder[index];
+                            currentOrder[index] = currentOrder[index - 1];
+                            currentOrder[index - 1] = temp;
+                            updateList();
+                        }
+                    });
+
+                    // Move Down Action
+                    item.querySelector('.down-btn')?.addEventListener('click', () => {
+                        AudioFX.playClick();
+                        if (index < currentOrder.length - 1) {
+                            const temp = currentOrder[index];
+                            currentOrder[index] = currentOrder[index + 1];
+                            currentOrder[index + 1] = temp;
+                            updateList();
+                        }
+                    });
+
+                    listContainer.appendChild(item);
+                });
+
+                GameState.userSelections = currentOrder.map(s => s.id);
+            }
+
+            updateList();
+            DOM.interactiveArea.appendChild(listContainer);
+        }
+
+        /* 4. Complex Multi-Select Renderer */
+        function renderMultiSelect(q) {
+            const container = document.createElement('div');
+            container.className = "space-y-2";
+
+            q.options.forEach((opt) => {
+                const label = document.createElement('label');
+                label.className = "p-3.5 rounded-xl bg-temple-dark hover:bg-amber-950/40 border border-gray-700 hover:border-amber-500/50 text-left text-xs sm:text-sm font-medium transition flex items-center justify-between cursor-pointer";
+
+                label.innerHTML = `
+                    <span class="text-gray-200 pr-2">${opt.text}</span>
+                    <input type="checkbox" value="${opt.id}" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+                `;
+
+                const checkbox = label.querySelector('input');
+                checkbox.addEventListener('change', () => {
+                    AudioFX.playClick();
+                    if (checkbox.checked) {
+                        label.className = "p-3.5 rounded-xl bg-amber-950/70 border-2 border-amber-500 text-amber-100 text-xs sm:text-sm font-semibold transition flex items-center justify-between cursor-pointer";
+                    } else {
+                        label.className = "p-3.5 rounded-xl bg-temple-dark border border-gray-700 text-left text-xs sm:text-sm font-medium transition flex items-center justify-between cursor-pointer";
+                    }
+
+                    // Collect selected option IDs
+                    const selectedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+                    GameState.userSelections = Array.from(selectedBoxes).map(cb => cb.value);
+                });
+
+                container.appendChild(label);
+            });
+
+            DOM.interactiveArea.appendChild(container);
+        }
+
+        /* ================= ANSWER EVALUATION & FEEDBACK ================= */
+        DOM.submitAnswerBtn.addEventListener('click', () => {
+            const q = QUESTION_DATABASE[GameState.currentQuestionIndex];
+            let isCorrect = false;
+
+            if (q.type === "fill_blank") {
+                if (GameState.userSelections.length > 0 && GameState.userSelections[0] === q.correct) {
+                    isCorrect = true;
+                }
+            } else if (q.type === "jumbled") {
+                if (JSON.stringify(GameState.userSelections) === JSON.stringify(q.correctOrder)) {
+                    isCorrect = true;
+                }
+            } else if (q.type === "dialogue") {
+                if (JSON.stringify(GameState.userSelections) === JSON.stringify(q.correctSequence)) {
+                    isCorrect = true;
+                }
+            } else if (q.type === "multi_select") {
+                const correctIDs = q.options.filter(o => o.correct).map(o => o.id).sort();
+                const userIDs = [...GameState.userSelections].sort();
+                if (JSON.stringify(correctIDs) === JSON.stringify(userIDs)) {
+                    isCorrect = true;
+                }
+            }
+
+            // Handle Evaluation Result
+            DOM.feedbackBox.classList.remove('hidden');
+
+            if (isCorrect) {
+                AudioFX.playCorrect();
+                GameState.comboCount++;
+                if (GameState.comboCount > GameState.maxCombo) {
+                    GameState.maxCombo = GameState.comboCount;
+                }
+                GameState.totalCorrect++;
+
+                const bonus = (GameState.comboCount > 1) ? (GameState.comboCount * 25) : 0;
+                const earnedPoints = 100 + bonus;
+                GameState.score += earnedPoints;
+
+                DOM.feedbackBox.className = "mb-4 p-3 rounded-xl bg-green-950/80 border border-green-500 text-green-300 text-sm font-bold text-center animate-bounce";
+                DOM.feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> Correct! The path is clear! (+${earnedPoints} pts)`;
+
+                DOM.submitAnswerBtn.disabled = true;
+
+                setTimeout(() => {
+                    advanceGame();
+                }, 1400);
+
+            } else {
+                AudioFX.playWrong();
+                GameState.comboCount = 0;
+                GameState.lives--;
+
+                DOM.feedbackBox.className = "mb-4 p-3 rounded-xl bg-red-950/80 border border-red-500 text-red-300 text-sm font-bold text-center";
+                DOM.feedbackBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> Oops! The temple trap has been activated! (-1 Heart)`;
+
+                // Update Hearts UI
+                let heartsHTML = "";
+                for (let i = 0; i < 3; i++) {
+                    if (i < GameState.lives) heartsHTML += '<i class="fa-solid fa-heart text-red-500"></i> ';
+                    else heartsHTML += '<i class="fa-solid fa-heart text-gray-600"></i> ';
+                }
+                DOM.heartsContainer.innerHTML = heartsHTML;
+
+                if (GameState.lives <= 0) {
+                    setTimeout(() => {
+                        DOM.gameOverScore.textContent = GameState.score;
+                        showScreen(DOM.gameOverScreen);
+                    }, 1200);
+                }
+            }
+        });
+
+        /* ================= GAME ADVANCEMENT LOGIC ================= */
+        function advanceGame() {
+            const nextIdx = GameState.currentQuestionIndex + 1;
+
+            // Check Level Checkpoints (End of Level 1 -> Q3, End of Level 2 -> Q6)
+            if (nextIdx === 3 || nextIdx === 6) {
+                AudioFX.playGong();
+                const completedLevelNum = (nextIdx === 3) ? 1 : 2;
+                DOM.checkpointTitle.textContent = `LEVEL ${completedLevelNum} CLEAR`;
+                DOM.cpScore.textContent = `+${GameState.score} pts`;
+
+                let heartsStr = "";
+                for (let i = 0; i < GameState.lives; i++) heartsStr += "❤️";
+                DOM.cpHearts.textContent = heartsStr;
+
+                const acc = Math.round((GameState.totalCorrect / (GameState.currentQuestionIndex + 1)) * 100);
+                DOM.cpAccuracy.textContent = `${acc}%`;
+
+                showScreen(DOM.checkpointScreen);
+
+                DOM.nextLevelBtn.onclick = () => {
+                    AudioFX.playClick();
+                    GameState.currentQuestionIndex = nextIdx;
+                    showScreen(DOM.gameplayScreen);
+                    loadQuestion(GameState.currentQuestionIndex);
+                };
+
+            } else if (nextIdx >= QUESTION_DATABASE.length) {
+                // VICTORY SCREEN
+                AudioFX.playVictory();
+                DOM.finalScore.textContent = GameState.score;
+                const acc = Math.round((GameState.totalCorrect / QUESTION_DATABASE.length) * 100);
+                DOM.finalAccuracy.textContent = `${acc}%`;
+                DOM.finalCombo.textContent = `${GameState.maxCombo}x`;
+
+                showScreen(DOM.victoryScreen);
+
+            } else {
+                GameState.currentQuestionIndex = nextIdx;
+                loadQuestion(GameState.currentQuestionIndex);
+            }
+        }
+
+        // Restart Game Handlers
+        DOM.restartGameBtn.addEventListener('click', () => {
+            AudioFX.playClick();
+            GameState.reset();
+            showScreen(DOM.gameplayScreen);
+            loadQuestion(0);
+        });
+
+        DOM.returnMenuBtn.addEventListener('click', () => {
+            AudioFX.playClick();
+            showScreen(DOM.mainMenuScreen);
+        });
+
+        DOM.playAgainBtn.addEventListener('click', () => {
+            AudioFX.playClick();
+            GameState.reset();
+            showScreen(DOM.gameplayScreen);
+            loadQuestion(0);
+        });
+
+        /* ================= AMBIENT CANVAS BACKGROUND ENGINE ================= */
+        const canvas = document.getElementById('adventureCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        let compassAngle = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Particle Class for glowing embers and pollen
+        class EmberParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 50;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 1.2 + 0.3;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.alpha = Math.random() * 0.7 + 0.3;
+                this.hue = Math.random() > 0.3 ? 38 : 15; // Amber or fiery red
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                this.alpha -= 0.003;
+
+                if (this.y < -10 || this.alpha <= 0) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = `hsl(${this.hue}, 90%, 55%)`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < 45; i++) {
+            particles.push(new EmberParticle());
+        }
+
+        function drawBackground() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Subtle dark radial gradient
+            const gradient = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, 100,
+                canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
+            );
+            gradient.addColorStop(0, '#1a1f2c');
+            gradient.addColorStop(1, '#080a0e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw floating glowing embers
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Ambient Compass Outline overlay on Canvas
+            compassAngle += 0.005;
+            ctx.save();
+            ctx.translate(canvas.width - 120, canvas.height - 120);
+            ctx.rotate(compassAngle);
+            ctx.strokeStyle = "rgba(251, 191, 36, 0.06)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 80, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Star points
+            for (let i = 0; i < 8; i++) {
+                ctx.rotate(Math.PI / 4);
+                ctx.beginPath();
+                ctx.moveTo(0, -80);
+                ctx.lineTo(0, -65);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            requestAnimationFrame(drawBackground);
+        }
+
+        window.onload = function() {
+            drawBackground();
+        };
+    </script>
+</body>
+</html>
